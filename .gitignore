@@ -1,0 +1,59 @@
+# OS / editor
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Python / Node / build artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+node_modules/
+dist/
+build/
+*.log
+*.egg-info/
+*.egg
+.eggs/
+
+# App runtime data (DO NOT COMMIT)
+Library/
+*.sqlite
+*.sqlite3
+*.db
+
+# Job artifacts / transcripts generated during dev runs
+jobs/
+artifacts/
+tmp/
+cache/
+output/
+transcripts/
+downloads/
+
+# Secrets (DO NOT COMMIT)
+.env
+.env.*
+*.env
+secrets.*
+*apikey*
+*api_key*
+cookies.txt
+youtube_cookies.txt
+**/YouTubeTranscriber/youtube_cookies.txt
+
+# Extension build outputs (if any)
+extension/dist/
+extension/build/
+
+# Packaging
+*.dmg
+*.pkg
+*.zip
