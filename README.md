@@ -1,19 +1,19 @@
 # YouTubeTranscriber v3
 
-A **native macOS desktop application** for transcribing YouTube videos, built with **py2app** into a proper `.app` bundle with a real Mach-O binary. Double-click to launch from Finder, Spotlight, or the Dock — no terminal needed.
+A **native macOS desktop application** for transcribing YouTube videos, built with **PyInstaller** into a proper `.app` bundle with a real Mach-O binary. Double-click to launch from Finder, Spotlight, or the Dock — no terminal needed.
 
-This is v3 of [YouTubeTranscriber](https://github.com/llmspace/YouTubeTranscriber), using py2app to produce a genuine macOS application that Finder and Gatekeeper recognize natively.
+This is v3 of [YouTubeTranscriber](https://github.com/llmspace/YouTubeTranscriber), using PyInstaller to produce a genuine macOS application that Finder and Gatekeeper recognize natively.
 
 ## What's New in v3
 
 | Feature | v1 | v2 | v3 |
 |---------|----|----|-----|
-| Launch method | `python3 main.py` | Shell-script .app | **py2app native .app** |
+| Launch method | `python3 main.py` | Shell-script .app | **PyInstaller native .app** |
 | Binary type | Python script | Bash script | **Mach-O binary** |
 | Finder/Gatekeeper | N/A | Blocked (error -54) | **Works natively** |
 | Terminal required | Yes | Partially | **No** |
 | Self-contained | No | No | **Yes (bundles Python)** |
-| Build system | None | Manual .app folder | **py2app** |
+| Build system | None | Manual .app folder | **PyInstaller** |
 
 ## Features
 
@@ -57,7 +57,7 @@ pip3 install -r requirements.txt
 ```
 
 The build script will:
-1. Check that Python 3, py2app, and requests are available
+1. Check that Python 3, PyInstaller, and requests are available
 2. Build the native `.app` bundle into `dist/YouTubeTranscriber.app`
 3. Remove quarantine flags automatically
 
@@ -75,15 +75,6 @@ This copies the built app to `/Applications` and verifies `yt-dlp` and `ffmpeg` 
 - **Spotlight** → type "YouTubeTranscriber"
 - **Dock** → drag from Applications to Dock for quick access
 - Or **double-click** `dist/YouTubeTranscriber.app`
-
-### Development Mode (Optional)
-
-For development, use alias mode which links to your source files (changes take effect immediately):
-
-```bash
-./build.sh --dev
-open dist/YouTubeTranscriber.app
-```
 
 ## Usage
 
@@ -143,18 +134,19 @@ For age-restricted or login-required videos:
 ~/Library/Logs/YouTubeTranscriber/app.log
 ```
 
-### Crash Dialogs
-If the app crashes, a native macOS alert will show the error message and point to the log file.
-
 ### Common Issues
 
 | Issue | Solution |
 |-------|----------|
-| Build fails with "py2app not found" | `pip3 install py2app` |
+| Build fails with "PyInstaller not found" | `pip3 install pyinstaller` |
 | "yt-dlp Not Found" alert on launch | `brew install yt-dlp` |
 | "ffmpeg Not Found" alert on launch | `brew install ffmpeg` |
 | Transcription timeout on long videos | Automatic — app splits into smaller chunks |
 | "Restricted content" error | Export cookies with the browser extension |
+
+### Why not py2app?
+
+py2app has a [known open issue](https://github.com/ronaldoussoren/py2app/issues/496) with Python 3.12 — it relies on the deprecated `imp` module and private `importlib.resources._files` API that were removed. PyInstaller fully supports Python 3.12 and produces the same result: a native `.app` with a Mach-O binary.
 
 ## Uninstall
 
@@ -169,10 +161,10 @@ This removes the app from `/Applications` and optionally deletes app data. Your 
 
 ```
 /transcriberv3
-  build.sh                        ← Build script (runs py2app)
+  build.sh                        ← Build script (runs PyInstaller)
   install.sh                      ← Install to /Applications
   uninstall.sh                    ← Clean uninstaller
-  setup.py                        ← py2app configuration
+  YouTubeTranscriber.spec         ← PyInstaller build configuration
   main.py                         ← Python entry point
   requirements.txt                ← Python dependencies
   /app

@@ -1,13 +1,12 @@
 #!/bin/bash
 # YouTubeTranscriber v3 — Build Script
-# Builds a native macOS .app bundle using py2app.
+# Builds a native macOS .app bundle using PyInstaller.
 #
 # Usage:
 #   ./build.sh           # Full standalone build
-#   ./build.sh --dev     # Development alias build (faster, links to source)
 #
 # Prerequisites:
-#   pip3 install py2app requests
+#   pip3 install pyinstaller requests
 
 set -euo pipefail
 
@@ -37,21 +36,13 @@ if [ -z "$PYTHON" ]; then
 fi
 echo "✅ Python 3 found: $PYTHON ($($PYTHON --version))"
 
-# ── Check setuptools (provides pkg_resources, required by py2app) ──────
-echo "Checking setuptools..."
-if ! "$PYTHON" -c "import pkg_resources" 2>/dev/null; then
-    echo "   Installing setuptools..."
-    "$PYTHON" -m pip install --user 'setuptools>=70.0'
+# ── Check PyInstaller ────────────────────────────────────────────────
+echo "Checking PyInstaller..."
+if ! "$PYTHON" -c "import PyInstaller" 2>/dev/null; then
+    echo "   Installing PyInstaller..."
+    "$PYTHON" -m pip install --user pyinstaller
 fi
-echo "✅ setuptools available"
-
-# ── Check py2app ─────────────────────────────────────────────
-echo "Checking py2app..."
-if ! "$PYTHON" -c "import py2app" 2>/dev/null; then
-    echo "   Installing py2app..."
-    "$PYTHON" -m pip install --user py2app
-fi
-echo "✅ py2app available"
+echo "✅ PyInstaller available"
 
 # ── Check requests ───────────────────────────────────────────────────
 echo "Checking requests..."
@@ -82,20 +73,12 @@ fi
 # ── Clean previous builds ────────────────────────────────────────────
 echo ""
 echo "Cleaning previous builds..."
-rm -rf build dist .eggs *.egg-info
+rm -rf build dist
 
 # ── Build ────────────────────────────────────────────────────────────
 echo ""
-if [ "${1:-}" = "--dev" ]; then
-    echo "Building in DEVELOPMENT mode (alias)..."
-    "$PYTHON" setup.py py2app -A
-    echo ""
-    echo "⚠️  Development build: the app links to your source files."
-    echo "   Changes to source code take effect immediately."
-else
-    echo "Building STANDALONE app..."
-    "$PYTHON" setup.py py2app
-fi
+echo "Building STANDALONE app with PyInstaller..."
+"$PYTHON" -m PyInstaller YouTubeTranscriber.spec --noconfirm
 
 # ── Remove quarantine ────────────────────────────────────────────────
 if [ -d "dist/YouTubeTranscriber.app" ]; then
@@ -112,8 +95,7 @@ echo "║  App location:                                   ║"
 echo "║    dist/YouTubeTranscriber.app                   ║"
 echo "║                                                  ║"
 echo "║  To install:                                     ║"
-echo "║    cp -r dist/YouTubeTranscriber.app             ║"
-echo "║       /Applications/                             ║"
+echo "║    ./install.sh                                  ║"
 echo "║                                                  ║"
 echo "║  Or just double-click the .app in dist/          ║"
 echo "║                                                  ║"
