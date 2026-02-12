@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 YouTubeTranscriber v3 — Main entry point.
-Designed to be bundled with py2app into a native macOS .app.
+Designed to be bundled with PyInstaller into a native macOS .app.
 """
 
 import sys
@@ -11,12 +11,32 @@ import traceback
 from pathlib import Path
 from datetime import datetime
 
+# ── Ensure Homebrew paths are in PATH ────────────────────────────────
+# When launched as a .app bundle, macOS does NOT source ~/.zshrc or
+# ~/.bash_profile, so Homebrew's bin directories are missing from PATH.
+# We add all common Homebrew locations so yt-dlp and ffmpeg are found.
+HOMEBREW_PATHS = [
+    "/opt/homebrew/bin",          # Apple Silicon default
+    "/opt/homebrew/sbin",
+    "/usr/local/bin",             # Intel Mac default
+    "/usr/local/sbin",
+    os.path.expanduser("~/Library/Python/3.12/bin"),
+    os.path.expanduser("~/Library/Python/3.11/bin"),
+    os.path.expanduser("~/Library/Python/3.13/bin"),
+    "/Library/Frameworks/Python.framework/Versions/3.12/bin",
+    "/Library/Frameworks/Python.framework/Versions/3.11/bin",
+]
+
+current_path = os.environ.get("PATH", "")
+for p in HOMEBREW_PATHS:
+    if os.path.isdir(p) and p not in current_path:
+        current_path = p + ":" + current_path
+os.environ["PATH"] = current_path
+
 # ── Determine project root ────────────────────────────────────────────
-# When bundled by py2app, __file__ is inside the .app bundle.
-# We need to find the actual resources directory.
 if getattr(sys, 'frozen', False):
-    # Running inside a py2app bundle
-    PROJECT_ROOT = Path(os.environ.get('RESOURCEPATH', Path(__file__).resolve().parent))
+    # Running inside a PyInstaller bundle
+    PROJECT_ROOT = Path(sys._MEIPASS)
 else:
     # Running from source
     PROJECT_ROOT = Path(__file__).resolve().parent
@@ -62,10 +82,16 @@ def check_prerequisites():
         missing.append("yt-dlp (install with: brew install yt-dlp)")
     if not shutil.which("ffmpeg"):
         missing.append("ffmpeg (install with: brew install ffmpeg)")
+
     if missing:
+        logger.error("Missing tools. PATH = %s", os.environ.get("PATH", ""))
         msg = "Missing required tools:\\n\\n" + "\\n".join(missing)
         show_crash_dialog(msg)
         sys.exit(1)
+
+    # Log found paths for debugging
+    logger.info("yt-dlp found at: %s", shutil.which("yt-dlp"))
+    logger.info("ffmpeg found at: %s", shutil.which("ffmpeg"))
 
 
 def main():
@@ -74,6 +100,7 @@ def main():
     logger.info("Python: %s", sys.executable)
     logger.info("Project root: %s", PROJECT_ROOT)
     logger.info("Frozen: %s", getattr(sys, 'frozen', False))
+    logger.info("PATH: %s", os.environ.get("PATH", ""))
     logger.info("=" * 60)
 
     try:
