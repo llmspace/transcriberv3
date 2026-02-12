@@ -228,8 +228,6 @@ YouTubeTranscriber does not host, redistribute, or monetize any YouTube content.
 - You are responsible for compliance with YouTube's Terms of Service
 - The developers are not liable for any misuse of this tool
 
-If you are a content creator and believe this tool is being used inappropriately with your content, please contact the repository maintainers.
-
 ## License
 
 MIT License. See [LICENSE](LICENSE) for details.
