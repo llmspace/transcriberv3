@@ -37,7 +37,15 @@ if [ -z "$PYTHON" ]; then
 fi
 echo "✅ Python 3 found: $PYTHON ($($PYTHON --version))"
 
-# ── Check py2app ─────────────────────────────────────────────────────
+# ── Check setuptools (provides pkg_resources, required by py2app) ──────
+echo "Checking setuptools..."
+if ! "$PYTHON" -c "import pkg_resources" 2>/dev/null; then
+    echo "   Installing setuptools..."
+    "$PYTHON" -m pip install --user 'setuptools>=70.0'
+fi
+echo "✅ setuptools available"
+
+# ── Check py2app ─────────────────────────────────────────────
 echo "Checking py2app..."
 if ! "$PYTHON" -c "import py2app" 2>/dev/null; then
     echo "   Installing py2app..."
