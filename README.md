@@ -219,4 +219,4 @@ All processing happens locally on your Mac. Audio files are downloaded temporari
 
 ## License
 
-This project is for personal and local use.
+MIT License. See [LICENSE](LICENSE) for details.
