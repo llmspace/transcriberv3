@@ -4,6 +4,10 @@ A **native macOS desktop application** for transcribing YouTube videos. Built wi
 
 YouTubeTranscriber takes a **captions-first approach**: it downloads creator-provided English captions whenever available, falling back to **Deepgram Nova-3** speech-to-text only when captions are absent. The result is fast, accurate transcripts saved as plain text files on your Mac.
 
+## Pipeline Overview
+
+![YouTubeTranscriber Pipeline](final_pipeline.jpg)
+
 ## Features
 
 YouTubeTranscriber is designed as a single-user, offline-first macOS application with no server component and no incoming network connections.

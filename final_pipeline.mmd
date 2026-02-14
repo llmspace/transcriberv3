@@ -1,0 +1,85 @@
+flowchart LR
+    subgraph Input_Stage [Input]
+        Start([fa:fa-link User Pastes<br/>YouTube URL])
+    end
+
+    subgraph Logic_Stage [Logic & Validation]
+        Parse[Parse &<br/>Validate URL]
+        DB[(fa:fa-database SQLite Database<br/>Jobs & Chunks)]
+        CheckDupe{Already<br/>Transcribed?}
+    end
+
+    subgraph Decision_Stage [Source Selection]
+        Metadata[Fetch Video Metadata<br/>via yt-dlp]
+        TryCaptions{Creator<br/>Captions<br/>Available?}
+    end
+
+    subgraph Caption_Path [Caption Pipeline]
+        FetchVTT[Download VTT Captions<br/>via yt-dlp]
+        ParseVTT[Parse VTT<br/>to Plain Text]
+    end
+
+    subgraph Audio_Path [Deepgram Pipeline]
+        Select[Select Audio Stream<br/>96kbps target]
+        Download[Download Audio<br/>via yt-dlp]
+        Normalize[Normalize Audio<br/>mono, 16kHz, MP3]
+        CheckLong{Duration<br/>> 2 Hours?}
+        Chunk[Split into Chunks<br/>with overlap]
+        Deepgram[[fa:fa-microchip Transcribe with<br/>Deepgram Nova-3]]
+        Merge[Merge Chunks<br/>dedupe overlaps]
+    end
+
+    subgraph Output_Stage [Output]
+        Write[/fa:fa-file-alt Save Transcript File<br/>to Downloads/]
+        Cleanup[Cleanup Temporary<br/>Audio Files]
+        End([fa:fa-check-circle Done])
+    end
+
+    Start --> Parse
+    Parse --> CheckDupe
+    DB <--> CheckDupe
+    CheckDupe -- No --> Metadata
+    CheckDupe -- Yes --> End
+    
+    Metadata --> TryCaptions
+    
+    TryCaptions -- Yes --> FetchVTT
+    FetchVTT --> ParseVTT
+    ParseVTT --> Write
+    
+    TryCaptions -- No --> Select
+    Select --> Download
+    Download --> Normalize
+    Normalize --> CheckLong
+    
+    CheckLong -- Yes --> Chunk
+    Chunk --> Deepgram
+    Deepgram --> Merge
+    Merge --> Write
+    
+    CheckLong -- No --> Deepgram
+    
+    Write --> Cleanup
+    Cleanup --> End
+
+    %% Styling - Subtle Blues and Reds
+    style Start fill:#e8eaf6,stroke:#3f51b5,stroke-width:2px
+    style End fill:#e8f5e9,stroke:#4caf50,stroke-width:2px
+    style DB fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style CheckDupe fill:#ffebee,stroke:#e53935,stroke-width:2px
+    style TryCaptions fill:#ffebee,stroke:#e53935,stroke-width:2px
+    style CheckLong fill:#ffebee,stroke:#e53935,stroke-width:2px
+    style Deepgram fill:#ede7f6,stroke:#5e35b1,stroke-width:2px
+    style Write fill:#e8f5e9,stroke:#43a047,stroke-width:2px
+    style Parse fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style Metadata fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style FetchVTT fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style ParseVTT fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style Select fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style Download fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style Normalize fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style Chunk fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style Merge fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style Cleanup fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style Input_Stage fill:none,stroke:#90a4ae,stroke-dasharray: 5 5
+    style Output_Stage fill:none,stroke:#90a4ae,stroke-dasharray: 5 5
