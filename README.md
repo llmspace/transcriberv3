@@ -1,12 +1,28 @@
 # video-to-text-transcriber
 
-A **native macOS desktop application** for transcribing YouTube videos. Built with **PyInstaller** into a genuine `.app` bundle with a Mach-O binary — double-click to launch from Finder, Spotlight, or the Dock with no terminal required.
+<p align="center">
+  <img src="youtube-to-text-transcriber.png" alt="video-to-text-transcriber icon" width="160"/>
+</p>
+
+<p align="center">
+  <strong>A native macOS desktop application for transcribing YouTube videos.</strong><br/>
+  Built with <strong>PyInstaller</strong> into a genuine <code>.app</code> bundle — double-click to launch from Finder, Spotlight, or the Dock. No terminal required.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/macOS-10.15%2B-blue?logo=apple" alt="macOS"/>
+  <img src="https://img.shields.io/badge/Python-3.10%2B-3776ab?logo=python&logoColor=white" alt="Python"/>
+  <img src="https://img.shields.io/badge/Deepgram-Nova--3-ff6b35" alt="Deepgram Nova-3"/>
+  <img src="https://img.shields.io/badge/version-1.0.0-3fb950" alt="v1.0.0"/>
+</p>
+
+---
 
 Takes a **captions-first approach**: it downloads creator-provided English captions whenever available, falling back to **Deepgram Nova-3** speech-to-text only when captions are absent. The result is fast, accurate transcripts saved as plain text files on your Mac.
 
 ## Pipeline Overview
 
-![video-to-text-transcriber Pipeline](final_pipeline.jpg)
+![video-to-text-transcriber Pipeline](pipeline_diagram_new.svg)
 
 ## Features
 

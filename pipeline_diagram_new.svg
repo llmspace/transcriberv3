@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="680" viewBox="0 0 1100 680" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif">
+<rect width="1100" height="680" fill="#0d1117" rx="12"/>
+<text x="550" y="38" text-anchor="middle" fill="#e6edf3" font-size="20" font-weight="700" letter-spacing="0.5">video-to-text-transcriber — Processing Pipeline</text>
+<rect x="30" y="80" width="160" height="52" rx="8" fill="#21262d" stroke="#21262d" stroke-width="1.5"/>
+<text x="110" y="100" text-anchor="middle" fill="#79c0ff" font-size="12" font-weight="600">YouTube URL</text>
+<text x="110" y="116" text-anchor="middle" fill="#79c0ff" font-size="10" opacity="0.75">Input</text>
+<line x1="190" y1="106" x2="204" y2="106" stroke="#58a6ff" stroke-width="2"/><polygon points="204,101 212,106 204,111" fill="#58a6ff"/>
+<rect x="220" y="80" width="160" height="52" rx="8" fill="#1f3a6e" stroke="#1f3a6e" stroke-width="1.5"/>
+<text x="300" y="100" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="600">Validate URL</text>
+<text x="300" y="116" text-anchor="middle" fill="#e6edf3" font-size="10" opacity="0.75">Extract video_id</text>
+<line x1="380" y1="106" x2="394" y2="106" stroke="#58a6ff" stroke-width="2"/><polygon points="394,101 402,106 394,111" fill="#58a6ff"/>
+<rect x="410" y="80" width="160" height="52" rx="8" fill="#1f3a6e" stroke="#1f3a6e" stroke-width="1.5"/>
+<text x="490" y="100" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="600">Duplicate Check</text>
+<text x="490" y="116" text-anchor="middle" fill="#e6edf3" font-size="10" opacity="0.75">DB + filesystem</text>
+<line x1="570" y1="106" x2="584" y2="106" stroke="#58a6ff" stroke-width="2"/><polygon points="584,101 592,106 584,111" fill="#58a6ff"/>
+<rect x="600" y="80" width="160" height="52" rx="8" fill="#1f3a6e" stroke="#1f3a6e" stroke-width="1.5"/>
+<text x="680" y="100" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="600">Fetch Metadata</text>
+<text x="680" y="116" text-anchor="middle" fill="#e6edf3" font-size="10" opacity="0.75">yt-dlp</text>
+<line x1="490" y1="132" x2="490" y2="164" stroke="#58a6ff" stroke-width="2"/><polygon points="485,164 490,172 495,164" fill="#58a6ff"/>
+<rect x="430" y="172" width="120" height="34" rx="8" fill="#21262d" stroke="#21262d" stroke-width="1.5"/>
+<text x="490" y="194" text-anchor="middle" fill="#8b949e" font-size="12" font-weight="600">SKIPPED</text>
+<line x1="680" y1="132" x2="680" y2="220" stroke="#58a6ff" stroke-width="2"/><polygon points="675,220 680,228 685,220" fill="#58a6ff"/>
+<rect x="600" y="220" width="160" height="52" rx="8" fill="#1a3a2a" stroke="#1a3a2a" stroke-width="1.5"/>
+<text x="680" y="240" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="600">Try Creator</text>
+<text x="680" y="256" text-anchor="middle" fill="#e6edf3" font-size="10" opacity="0.75">Captions (VTT)</text>
+<line x1="600" y1="246" x2="578" y2="246" stroke="#3fb950" stroke-width="2"/><polygon points="578,241 570,246 578,251" fill="#3fb950"/>
+<rect x="418" y="220" width="160" height="52" rx="8" fill="#1a3a2a" stroke="#1a3a2a" stroke-width="1.5"/>
+<text x="498" y="240" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="600">Parse VTT</text>
+<text x="498" y="256" text-anchor="middle" fill="#e6edf3" font-size="10" opacity="0.75">→ plain text</text>
+<line x1="498" y1="272" x2="498" y2="300" stroke="#3fb950" stroke-width="2" stroke-dasharray="5,3"/><polygon points="493,300 498,308 503,300" fill="#3fb950"/>
+<text x="494" y="290" text-anchor="end" fill="#3fb950" font-size="9">captions</text>
+<text x="494" y="300" text-anchor="end" fill="#f85149" font-size="9">empty→fallback</text>
+<rect x="418" y="320" width="160" height="52" rx="8" fill="#1a3a2a" stroke="#1a3a2a" stroke-width="1.5"/>
+<text x="498" y="340" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="600">Write TXT</text>
+<text x="498" y="356" text-anchor="middle" fill="#e6edf3" font-size="10" opacity="0.75">Output file</text>
+<line x1="680" y1="272" x2="680" y2="300" stroke="#58a6ff" stroke-width="2"/><polygon points="675,300 680,308 685,300" fill="#58a6ff"/>
+<text x="686" y="292" fill="#f85149" font-size="9">no captions</text>
+<rect x="52" y="300" width="716" height="240" rx="10" fill="#21262d" stroke="#30363d" stroke-width="1.5" stroke-dasharray="6,3"/>
+<text x="60" y="316" fill="#8b949e" font-size="10" font-weight="600">Deepgram Audio Path</text>
+<rect x="600" y="328" width="160" height="52" rx="8" fill="#2d1f6e" stroke="#2d1f6e" stroke-width="1.5"/>
+<text x="680" y="348" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="600">Select Audio</text>
+<text x="680" y="364" text-anchor="middle" fill="#e6edf3" font-size="10" opacity="0.75">96kbps target</text>
+<line x1="600" y1="354" x2="578" y2="354" stroke="#58a6ff" stroke-width="2"/><polygon points="578,349 570,354 578,359" fill="#58a6ff"/>
+<rect x="418" y="328" width="160" height="52" rx="8" fill="#2d1f6e" stroke="#2d1f6e" stroke-width="1.5"/>
+<text x="498" y="348" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="600">Download Audio</text>
+<text x="498" y="364" text-anchor="middle" fill="#e6edf3" font-size="10" opacity="0.75">yt-dlp</text>
+<line x1="418" y1="354" x2="396" y2="354" stroke="#58a6ff" stroke-width="2"/><polygon points="396,349 388,354 396,359" fill="#58a6ff"/>
+<rect x="236" y="328" width="160" height="52" rx="8" fill="#2d1f6e" stroke="#2d1f6e" stroke-width="1.5"/>
+<text x="316" y="348" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="600">Normalise</text>
+<text x="316" y="364" text-anchor="middle" fill="#e6edf3" font-size="10" opacity="0.75">mono 16kHz MP3</text>
+<line x1="316" y1="380" x2="316" y2="400" stroke="#58a6ff" stroke-width="2"/><polygon points="311,400 316,408 321,400" fill="#58a6ff"/>
+<rect x="236" y="408" width="160" height="52" rx="8" fill="#2d1f6e" stroke="#2d1f6e" stroke-width="1.5"/>
+<text x="316" y="428" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="600">Chunk Audio</text>
+<text x="316" y="444" text-anchor="middle" fill="#e6edf3" font-size="10" opacity="0.75">>2h: 1h chunks</text>
+<line x1="476" y1="434" x2="490" y2="434" stroke="#58a6ff" stroke-width="2"/><polygon points="490,429 498,434 490,439" fill="#58a6ff"/>
+<rect x="498" y="408" width="160" height="52" rx="8" fill="#3a1f6e" stroke="#3a1f6e" stroke-width="1.5"/>
+<text x="578" y="428" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="600">Transcribe</text>
+<text x="578" y="444" text-anchor="middle" fill="#e6edf3" font-size="10" opacity="0.75">Deepgram Nova-3</text>
+<text x="578" y="474" text-anchor="middle" fill="#8b949e" font-size="9">exp. backoff on 429</text>
+<line x1="658" y1="434" x2="672" y2="434" stroke="#58a6ff" stroke-width="2"/><polygon points="672,429 680,434 672,439" fill="#58a6ff"/>
+<rect x="680" y="408" width="160" height="52" rx="8" fill="#2d1f6e" stroke="#2d1f6e" stroke-width="1.5"/>
+<text x="760" y="428" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="600">Merge Chunks</text>
+<text x="760" y="444" text-anchor="middle" fill="#e6edf3" font-size="10" opacity="0.75">dedup overlap</text>
+<line x1="760" y1="460" x2="760" y2="482" stroke="#58a6ff" stroke-width="2"/><polygon points="755,482 760,490 765,482" fill="#58a6ff"/>
+<rect x="680" y="490" width="160" height="52" rx="8" fill="#1a3a2a" stroke="#1a3a2a" stroke-width="1.5"/>
+<text x="760" y="510" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="600">Write TXT</text>
+<text x="760" y="526" text-anchor="middle" fill="#e6edf3" font-size="10" opacity="0.75">Output file</text>
+<line x1="578" y1="346" x2="680" y2="516" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="4,3"/>
+<line x1="840" y1="516" x2="854" y2="516" stroke="#58a6ff" stroke-width="2"/><polygon points="854,511 862,516 854,521" fill="#58a6ff"/>
+<rect x="862" y="490" width="160" height="52" rx="8" fill="#21262d" stroke="#21262d" stroke-width="1.5"/>
+<text x="942" y="510" text-anchor="middle" fill="#8b949e" font-size="12" font-weight="600">Cleanup</text>
+<text x="942" y="526" text-anchor="middle" fill="#8b949e" font-size="10" opacity="0.75">temp files</text>
+<line x1="1022" y1="516" x2="1036" y2="516" stroke="#58a6ff" stroke-width="2"/><polygon points="1036,511 1044,516 1036,521" fill="#58a6ff"/>
+<rect x="1044" y="490" width="160" height="52" rx="8" fill="#1a3a2a" stroke="#1a3a2a" stroke-width="1.5"/>
+<text x="1124" y="521" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="600">COMPLETED</text>
+<rect x="30" y="600" width="500" height="58" rx="6" fill="#21262d" stroke="#30363d" stroke-width="1"/>
+<text x="40" y="616" fill="#8b949e" font-size="10" font-weight="600">Legend</text>
+<line x1="40" y1="630" x2="68" y2="630" stroke="#58a6ff" stroke-width="2"/><polygon points="68,625 76,630 68,635" fill="#58a6ff"/>
+<text x="82" y="634" fill="#8b949e" font-size="10">Main flow</text>
+<line x1="160" y1="630" x2="188" y2="630" stroke="#3fb950" stroke-width="2" stroke-dasharray="5,3"/><polygon points="188,625 196,630 188,635" fill="#3fb950"/>
+<text x="202" y="634" fill="#8b949e" font-size="10">Captions path</text>
+<rect x="310" y="622" width="14" height="14" rx="3" fill="#3a1f6e"/>
+<text x="330" y="634" fill="#8b949e" font-size="10">Deepgram API</text>
+<rect x="420" y="622" width="14" height="14" rx="3" fill="#1a3a2a"/>
+<text x="440" y="634" fill="#8b949e" font-size="10">Captions / Output</text>
+<text x="40" y="652" fill="#8b949e" font-size="9">Thread-safe SQLite · Atomic duplicate check · Exponential backoff (429) · VTT→Deepgram fallback · Config validation</text>
+</svg>
