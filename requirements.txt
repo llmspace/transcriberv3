@@ -1,4 +1,4 @@
-# YouTubeTranscriber v3 — Python Dependencies
+# video-to-text-transcriber v1.0.0 — Python Dependencies
 
 requests>=2.28.0
 pyinstaller>=6.0.0

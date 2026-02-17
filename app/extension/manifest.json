@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "YouTube Cookies Exporter for YouTubeTranscriber",
+  "name": "YouTube Cookies Exporter for video-to-text-transcriber",
   "version": "1.0.0",
-  "description": "Export YouTube-only cookies to a local file for use with YouTubeTranscriber (yt-dlp compatible format).",
+  "description": "Export YouTube-only cookies to a local file for use with video-to-text-transcriber (yt-dlp compatible format).",
   "permissions": [
     "cookies",
     "downloads"

@@ -1,5 +1,5 @@
 """
-SQLite data models (plain dataclasses) for YouTubeTranscriber.
+SQLite data models (plain dataclasses) for video-to-text-transcriber.
 """
 
 from dataclasses import dataclass, field

@@ -1,5 +1,5 @@
 """
-Standardised error handling for YouTubeTranscriber.
+Standardised error handling for video-to-text-transcriber.
 """
 
 from app.core.constants import ErrorCode, RETRYABLE_ERRORS

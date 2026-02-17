@@ -1,5 +1,5 @@
 """
-Security utilities for YouTubeTranscriber.
+Security utilities for video-to-text-transcriber.
 - Path traversal protection
 - Filename sanitization
 - Safe subprocess execution (argument arrays only)

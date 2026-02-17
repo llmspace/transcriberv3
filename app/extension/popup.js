@@ -1,5 +1,5 @@
 /**
- * YouTubeTranscriber Cookies Exporter — Popup Script
+ * video-to-text-transcriber Cookies Exporter — Popup Script
  */
 
 const exportBtn = document.getElementById("exportBtn");

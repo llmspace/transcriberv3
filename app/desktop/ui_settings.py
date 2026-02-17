@@ -1,5 +1,5 @@
 """
-Settings and Diagnostics UI panels for YouTubeTranscriber.
+Settings and Diagnostics UI panels for video-to-text-transcriber.
 """
 
 import tkinter as tk

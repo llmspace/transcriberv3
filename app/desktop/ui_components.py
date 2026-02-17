@@ -1,5 +1,5 @@
 """
-Reusable UI components for YouTubeTranscriber.
+Reusable UI components for video-to-text-transcriber.
 Built with tkinter (ships with macOS Python).
 """
 

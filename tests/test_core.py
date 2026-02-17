@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unit tests for YouTubeTranscriber core modules.
+Unit tests for video-to-text-transcriber core modules.
 Tests cover: URL parsing, security utils, database, captions parsing, audio selection, chunking.
 """
 

@@ -62,7 +62,7 @@ CREATE INDEX IF NOT EXISTS idx_job_chunks_job_idx ON job_chunks(job_id, idx);
 
 
 class Database:
-    """SQLite database wrapper for YouTubeTranscriber."""
+    """SQLite database wrapper for video-to-text-transcriber."""
 
     def __init__(self, db_path: Path | None = None):
         self.db_path = db_path or DB_PATH

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This Chrome/Chromium extension exports YouTube-only cookies to a local file in Netscape `cookies.txt` format, compatible with `yt-dlp`. This allows YouTubeTranscriber to access age-restricted or login-required content.
+This Chrome/Chromium extension exports YouTube-only cookies to a local file in Netscape `cookies.txt` format, compatible with `yt-dlp`. This allows video-to-text-transcriber to access age-restricted or login-required content.
 
 ## Installation
 
@@ -16,7 +16,7 @@ This Chrome/Chromium extension exports YouTube-only cookies to a local file in N
 1. Log in to YouTube in your browser
 2. Click the extension icon in the toolbar
 3. Click **Export Cookies**
-4. The cookies file will be saved to: `~/Downloads/YouTubeTranscriber/youtube_cookies.txt`
+4. The cookies file will be saved to: `~/Downloads/Video to Text Transcriber/youtube_cookies.txt`
 
 ## Cookie Domains
 
@@ -32,7 +32,7 @@ Optionally, you can include `.google.com` cookies by checking the option in the 
 - The exported `cookies.txt` contains sensitive session data
 - **Do not share** this file with anyone
 - The file grants access to your YouTube/Google account
-- YouTubeTranscriber reads this file in read-only mode
+- video-to-text-transcriber reads this file in read-only mode
 - Consider deleting the cookies file after your transcription session
 
 ## File Format

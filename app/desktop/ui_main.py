@@ -1,5 +1,5 @@
 """
-Main application window for YouTubeTranscriber.
+Main application window for video-to-text-transcriber.
 Built with tkinter — no external UI dependencies.
 Supports paste, drag-and-drop (.txt/.csv), folder picker, job queue display.
 """

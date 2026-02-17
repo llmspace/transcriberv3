@@ -1,5 +1,5 @@
 /**
- * YouTubeTranscriber Cookies Exporter — Background Service Worker
+ * video-to-text-transcriber Cookies Exporter — Background Service Worker
  *
  * Exports YouTube-only cookies in Netscape cookies.txt format
  * compatible with yt-dlp.
@@ -22,7 +22,7 @@ const OPTIONAL_DOMAINS = [
 ];
 
 const OUTPUT_FILENAME = "youtube_cookies.txt";
-const OUTPUT_SUBDIR = "YouTubeTranscriber";
+const OUTPUT_SUBDIR = "Video to Text Transcriber";
 
 /**
  * Check if a cookie domain matches the allowlist.
@@ -100,7 +100,7 @@ async function generateCookiesTxt(includeGoogle = false) {
   const timestamp = new Date().toISOString();
 
   let content = `# Netscape HTTP Cookie File\n`;
-  content += `# Exported by YouTubeTranscriber Cookies Exporter\n`;
+  content += `# Exported by video-to-text-transcriber Cookies Exporter\n`;
   content += `# Export timestamp: ${timestamp}\n`;
   content += `# Domains: ${ALLOWED_DOMAINS.join(", ")}${includeGoogle ? ", " + OPTIONAL_DOMAINS.join(", ") : ""}\n`;
   content += `# Cookie count: ${cookies.length}\n`;
@@ -114,7 +114,7 @@ async function generateCookiesTxt(includeGoogle = false) {
 }
 
 /**
- * Download the cookies file to ~/Downloads/YouTubeTranscriber/youtube_cookies.txt
+ * Download the cookies file to ~/Downloads/Video to Text Transcriber/youtube_cookies.txt
  */
 async function exportCookies(includeGoogle = false) {
   const { content, count } = await generateCookiesTxt(includeGoogle);
