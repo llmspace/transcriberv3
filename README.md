@@ -50,7 +50,7 @@ A Deepgram API key is required for the speech-to-text fallback (used only when c
 ### 1. Clone and Build
 
 ```bash
-git clone https://github.com/llmspace/transcriberv3.git
+git clone https://github.com/llmspace/video-to-text-transcriber.git
 cd transcriberv3
 pip3 install -r requirements.txt
 ./build.sh
