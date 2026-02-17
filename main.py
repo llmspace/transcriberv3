@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-YouTubeTranscriber v3 — Main entry point.
+video-to-text-transcriber v1.0.0 — Main entry point.
 Designed to be bundled with PyInstaller into a native macOS .app.
 """
 
@@ -44,8 +44,8 @@ else:
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-# ── Logging setup (writes to ~/Library/Logs/YouTubeTranscriber/) ─────
-LOG_DIR = Path.home() / "Library" / "Logs" / "YouTubeTranscriber"
+# ── Logging setup (writes to ~/Library/Logs/video-to-text-transcriber/) ─────
+LOG_DIR = Path.home() / "Library" / "Logs" / "video-to-text-transcriber"
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 LOG_FILE = LOG_DIR / "app.log"
 
@@ -56,7 +56,7 @@ logging.basicConfig(
         logging.FileHandler(LOG_FILE, encoding="utf-8"),
     ],
 )
-logger = logging.getLogger("YouTubeTranscriber")
+logger = logging.getLogger("video-to-text-transcriber")
 
 
 def show_crash_dialog(error_msg: str):
@@ -66,7 +66,7 @@ def show_crash_dialog(error_msg: str):
         safe_msg = error_msg.replace('"', '\\"').replace("'", "\\'")[:500]
         subprocess.run([
             "osascript", "-e",
-            f'display alert "YouTubeTranscriber Error" '
+            f'display alert "video-to-text-transcriber Error" '
             f'message "{safe_msg}\\n\\nCheck logs at:\\n{LOG_FILE}" '
             f'as critical buttons {{"OK"}}'
         ], timeout=30)
@@ -96,7 +96,7 @@ def check_prerequisites():
 
 def main():
     logger.info("=" * 60)
-    logger.info("YouTubeTranscriber v3 starting at %s", datetime.now().isoformat())
+    logger.info("video-to-text-transcriber v1.0.0 starting at %s", datetime.now().isoformat())
     logger.info("Python: %s", sys.executable)
     logger.info("Project root: %s", PROJECT_ROOT)
     logger.info("Frozen: %s", getattr(sys, 'frozen', False))

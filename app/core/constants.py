@@ -1,5 +1,5 @@
 """
-Shared constants for YouTubeTranscriber.
+Shared constants for video-to-text-transcriber.
 Single source of truth — imported by every other module.
 """
 
@@ -7,26 +7,27 @@ import os
 import pathlib
 
 # ── Application identity ──────────────────────────────────────────────
-APP_NAME = "YouTubeTranscriber"
-APP_BUNDLE_ID = "com.local.youtubetranscriber"
-APP_VERSION = "3.0.0"
+APP_NAME = "video-to-text-transcriber"
+APP_DISPLAY_NAME = "Video to Text Transcriber"
+APP_BUNDLE_ID = "com.local.videototexttranscriber"
+APP_VERSION = "1.0.0"
 
 # ── Filesystem paths ─────────────────────────────────────────────────
 HOME = pathlib.Path.home()
 
-DEFAULT_OUTPUT_ROOT = HOME / "Downloads" / "YouTube Transcripts"
-APP_SUPPORT_DIR = HOME / "Library" / "Application Support" / APP_NAME
-APP_CACHE_DIR = HOME / "Library" / "Caches" / APP_NAME
+DEFAULT_OUTPUT_ROOT = HOME / "Downloads" / "Video Transcripts"
+APP_SUPPORT_DIR = HOME / "Library" / "Application Support" / APP_DISPLAY_NAME
+APP_CACHE_DIR = HOME / "Library" / "Caches" / APP_DISPLAY_NAME
 JOBS_CACHE_DIR = APP_CACHE_DIR / "jobs"
 DB_PATH = APP_SUPPORT_DIR / "app.db"
 CONFIG_PATH = APP_SUPPORT_DIR / "config.json"
 
 # Cookies
-DEFAULT_COOKIES_DIR = HOME / "Downloads" / APP_NAME
+DEFAULT_COOKIES_DIR = HOME / "Downloads" / APP_DISPLAY_NAME
 DEFAULT_COOKIES_PATH = DEFAULT_COOKIES_DIR / "youtube_cookies.txt"
 
 # ── Keychain identifiers ─────────────────────────────────────────────
-KEYCHAIN_SERVICE = "YouTubeTranscriber:Deepgram"
+KEYCHAIN_SERVICE = "video-to-text-transcriber:Deepgram"
 KEYCHAIN_ACCOUNT = "default"
 
 # ── Job status values ─────────────────────────────────────────────────

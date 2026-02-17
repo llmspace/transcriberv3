@@ -1,11 +1,12 @@
 """
-SQLite database layer for YouTubeTranscriber.
-Thread-safe via check_same_thread=False + explicit locking.
+SQLite database layer for video-to-text-transcriber.
+Thread-safe via check_same_thread=False + explicit threading.Lock on all writes.
 """
 
 import sqlite3
 import uuid
 import logging
+import threading
 from datetime import datetime, timezone
 from typing import Optional
 from pathlib import Path
@@ -65,6 +66,7 @@ class Database:
 
     def __init__(self, db_path: Path | None = None):
         self.db_path = db_path or DB_PATH
+        self._lock = threading.Lock()
         self._ensure_dirs()
         self.conn = sqlite3.connect(
             str(self.db_path),
@@ -79,14 +81,14 @@ class Database:
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
 
     def _migrate(self):
-        cur = self.conn.cursor()
-        cur.executescript(_CREATE_TABLES)
-        # Set schema version
-        cur.execute(
-            "INSERT OR REPLACE INTO schema_version (version) VALUES (?)",
-            (_SCHEMA_VERSION,),
-        )
-        self.conn.commit()
+        with self._lock:
+            cur = self.conn.cursor()
+            cur.executescript(_CREATE_TABLES)
+            cur.execute(
+                "INSERT OR REPLACE INTO schema_version (version) VALUES (?)",
+                (_SCHEMA_VERSION,),
+            )
+            self.conn.commit()
 
     def close(self):
         if self.conn:
@@ -118,17 +120,18 @@ class Database:
             created_at=now,
             updated_at=now,
         )
-        self.conn.execute(
-            """INSERT INTO jobs
-               (id, youtube_url, video_id, status, progress_pct,
-                retry_count, retryable, used_creator_captions,
-                created_at, updated_at)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-            (job.id, job.youtube_url, job.video_id, job.status,
-             job.progress_pct, job.retry_count, job.retryable,
-             job.used_creator_captions, job.created_at, job.updated_at),
-        )
-        self.conn.commit()
+        with self._lock:
+            self.conn.execute(
+                """INSERT INTO jobs
+                   (id, youtube_url, video_id, status, progress_pct,
+                    retry_count, retryable, used_creator_captions,
+                    created_at, updated_at)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (job.id, job.youtube_url, job.video_id, job.status,
+                 job.progress_pct, job.retry_count, job.retryable,
+                 job.used_creator_captions, job.created_at, job.updated_at),
+            )
+            self.conn.commit()
         return job
 
     def get_job(self, job_id: str) -> Job | None:
@@ -154,10 +157,11 @@ class Database:
         kwargs['updated_at'] = self._now()
         sets = ', '.join(f"{k} = ?" for k in kwargs)
         vals = list(kwargs.values()) + [job_id]
-        self.conn.execute(
-            f"UPDATE jobs SET {sets} WHERE id = ?", vals
-        )
-        self.conn.commit()
+        with self._lock:
+            self.conn.execute(
+                f"UPDATE jobs SET {sets} WHERE id = ?", vals
+            )
+            self.conn.commit()
 
     def update_job_status(self, job_id: str, status: str, stage: str | None = None,
                           progress_pct: int | None = None, **extra):
@@ -179,37 +183,41 @@ class Database:
         return row is not None
 
     def delete_job(self, job_id: str):
-        self.conn.execute("DELETE FROM job_chunks WHERE job_id = ?", (job_id,))
-        self.conn.execute("DELETE FROM jobs WHERE id = ?", (job_id,))
-        self.conn.commit()
+        with self._lock:
+            self.conn.execute("DELETE FROM job_chunks WHERE job_id = ?", (job_id,))
+            self.conn.execute("DELETE FROM jobs WHERE id = ?", (job_id,))
+            self.conn.commit()
 
     def clear_queued_jobs(self):
-        self.conn.execute(
-            "DELETE FROM jobs WHERE status = ?", (JobStatus.QUEUED,)
-        )
-        self.conn.commit()
+        with self._lock:
+            self.conn.execute(
+                "DELETE FROM jobs WHERE status = ?", (JobStatus.QUEUED,)
+            )
+            self.conn.commit()
 
     # ── Chunk CRUD ────────────────────────────────────────────────────
 
     def create_chunk(self, chunk: JobChunk):
-        self.conn.execute(
-            """INSERT INTO job_chunks
-               (job_id, idx, start_sec, end_sec, status, attempts)
-               VALUES (?, ?, ?, ?, ?, ?)""",
-            (chunk.job_id, chunk.idx, chunk.start_sec, chunk.end_sec,
-             chunk.status, chunk.attempts),
-        )
-        self.conn.commit()
+        with self._lock:
+            self.conn.execute(
+                """INSERT INTO job_chunks
+                   (job_id, idx, start_sec, end_sec, status, attempts)
+                   VALUES (?, ?, ?, ?, ?, ?)""",
+                (chunk.job_id, chunk.idx, chunk.start_sec, chunk.end_sec,
+                 chunk.status, chunk.attempts),
+            )
+            self.conn.commit()
 
     def create_chunks(self, chunks: list[JobChunk]):
-        self.conn.executemany(
-            """INSERT INTO job_chunks
-               (job_id, idx, start_sec, end_sec, status, attempts)
-               VALUES (?, ?, ?, ?, ?, ?)""",
-            [(c.job_id, c.idx, c.start_sec, c.end_sec, c.status, c.attempts)
-             for c in chunks],
-        )
-        self.conn.commit()
+        with self._lock:
+            self.conn.executemany(
+                """INSERT INTO job_chunks
+                   (job_id, idx, start_sec, end_sec, status, attempts)
+                   VALUES (?, ?, ?, ?, ?, ?)""",
+                [(c.job_id, c.idx, c.start_sec, c.end_sec, c.status, c.attempts)
+                 for c in chunks],
+            )
+            self.conn.commit()
 
     def get_chunks(self, job_id: str) -> list[JobChunk]:
         rows = self.conn.execute(
@@ -221,11 +229,13 @@ class Database:
     def update_chunk(self, job_id: str, idx: int, **kwargs):
         sets = ', '.join(f"{k} = ?" for k in kwargs)
         vals = list(kwargs.values()) + [job_id, idx]
-        self.conn.execute(
-            f"UPDATE job_chunks SET {sets} WHERE job_id = ? AND idx = ?", vals
-        )
-        self.conn.commit()
+        with self._lock:
+            self.conn.execute(
+                f"UPDATE job_chunks SET {sets} WHERE job_id = ? AND idx = ?", vals
+            )
+            self.conn.commit()
 
     def delete_chunks(self, job_id: str):
-        self.conn.execute("DELETE FROM job_chunks WHERE job_id = ?", (job_id,))
-        self.conn.commit()
+        with self._lock:
+            self.conn.execute("DELETE FROM job_chunks WHERE job_id = ?", (job_id,))
+            self.conn.commit()

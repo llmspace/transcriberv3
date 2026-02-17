@@ -12,6 +12,12 @@ from app.core.constants import (
     CHUNK_THRESHOLD_HOURS, BASE_CHUNK_SEC, CHUNK_OVERLAP_SEC,
 )
 
+# Validation bounds
+_CHUNK_THRESHOLD_MIN = 0.25   # 15 minutes
+_CHUNK_THRESHOLD_MAX = 12     # 12 hours
+_BASE_CHUNK_MIN = 300         # 5 minutes
+_BASE_CHUNK_MAX = 7200        # 2 hours
+
 logger = logging.getLogger(__name__)
 
 _DEFAULTS = {
@@ -54,8 +60,37 @@ class AppConfig:
         return self._data.get(key, default)
 
     def set(self, key: str, value):
+        value = self._validate(key, value)
         self._data[key] = value
         self.save()
+
+    def _validate(self, key: str, value):
+        """Validate and coerce config values to safe ranges."""
+        if key == 'chunk_threshold_hours':
+            try:
+                value = float(value)
+            except (TypeError, ValueError):
+                logger.warning("Invalid chunk_threshold_hours %r — using default", value)
+                return CHUNK_THRESHOLD_HOURS
+            return max(_CHUNK_THRESHOLD_MIN, min(_CHUNK_THRESHOLD_MAX, value))
+
+        if key == 'base_chunk_sec':
+            try:
+                value = int(value)
+            except (TypeError, ValueError):
+                logger.warning("Invalid base_chunk_sec %r — using default", value)
+                return BASE_CHUNK_SEC
+            return max(_BASE_CHUNK_MIN, min(_BASE_CHUNK_MAX, value))
+
+        if key == 'cookies_mode':
+            if value not in (CookiesMode.OFF, CookiesMode.USE_FILE):
+                logger.warning("Invalid cookies_mode %r — using OFF", value)
+                return CookiesMode.OFF
+
+        if key == 'keep_debug_artifacts':
+            return bool(value)
+
+        return value
 
     def as_dict(self) -> dict:
         return dict(self._data)

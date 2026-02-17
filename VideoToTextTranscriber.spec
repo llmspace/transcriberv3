@@ -1,11 +1,11 @@
 # -*- mode: python ; coding: utf-8 -*-
 """
-YouTubeTranscriber v3 — PyInstaller spec file.
+video-to-text-transcriber v1.0.0 — PyInstaller spec file.
 
 Builds a native macOS .app bundle with a real Mach-O binary.
 
 Usage:
-    pyinstaller YouTubeTranscriber.spec
+    pyinstaller VideoToTextTranscriber.spec
 """
 
 import os
@@ -88,7 +88,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='YouTubeTranscriber',
+    name='VideoToTextTranscriber',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -109,7 +109,7 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='YouTubeTranscriber',
+    name='VideoToTextTranscriber',
 )
 
 # Check if icon file exists
@@ -117,15 +117,15 @@ icon_file = 'AppIcon.icns' if os.path.exists('AppIcon.icns') else None
 
 app = BUNDLE(
     coll,
-    name='YouTubeTranscriber.app',
+    name='VideoToTextTranscriber.app',
     icon=icon_file,
-    bundle_identifier='com.local.youtubetranscriber',
-    version='3.0.0',
+    bundle_identifier='com.local.videototexttranscriber',
+    version='1.0.0',
     info_plist={
-        'CFBundleName': 'YouTubeTranscriber',
-        'CFBundleDisplayName': 'YouTube Transcriber',
-        'CFBundleVersion': '3.0.0',
-        'CFBundleShortVersionString': '3.0.0',
+        'CFBundleName': 'VideoToTextTranscriber',
+        'CFBundleDisplayName': 'Video to Text Transcriber',
+        'CFBundleVersion': '1.0.0',
+        'CFBundleShortVersionString': '1.0.0',
         'LSMinimumSystemVersion': '10.15',
         'NSHumanReadableCopyright': 'Local use only',
         'NSHighResolutionCapable': True,

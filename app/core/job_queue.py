@@ -235,8 +235,8 @@ class JobQueueManager:
             )
 
             if vtt_path:
-                # ── Captions found → parse and write ──
-                self._process_captions_path(job_id, vtt_path, title, video_id, workspace)
+                # ── Captions found → parse and write (with Deepgram fallback on empty) ──
+                self._process_captions_path(job_id, vtt_path, title, video_id, workspace, metadata)
                 return
 
             # ── No creator captions → Deepgram fallback ──
@@ -250,23 +250,37 @@ class JobQueueManager:
             self.db.update_job_status(
                 job_id, JobStatus.FAILED,
                 error_code="ERR_UNEXPECTED",
-                error_message=str(e)[:500],
+                error_message=str(e)[:2000],
                 retryable=1,
             )
             self._notify_job_updated(job_id)
             cleanup_job_artifacts(workspace, self.keep_debug)
 
     def _check_duplicate(self, job_id: str, video_id: str) -> bool:
-        """Check for duplicates. Returns True if job was skipped."""
-        # Check DB for completed job
-        if self.db.has_completed_video(video_id):
-            self.db.update_job_status(job_id, JobStatus.SKIPPED,
-                                      stage="DUPLICATE_IN_DB",
-                                      progress_pct=100)
-            self._notify_job_updated(job_id)
-            return True
+        """
+        Atomic duplicate check — queries DB and filesystem under a single
+        lock acquisition so two jobs for the same video_id cannot both pass.
+        Returns True if the job was skipped.
+        """
+        with self.db._lock:
+            # DB check inside the lock
+            already_done = self.db.conn.execute(
+                "SELECT 1 FROM jobs WHERE video_id = ? AND status = ? AND id != ? LIMIT 1",
+                (video_id, JobStatus.COMPLETED, job_id),
+            ).fetchone()
 
-        # Check filesystem for existing transcript
+            if already_done:
+                # Mark skipped while still holding the lock
+                now = self.db._now()
+                self.db.conn.execute(
+                    "UPDATE jobs SET status=?, stage=?, progress_pct=?, completed_at=?, updated_at=? WHERE id=?",
+                    (JobStatus.SKIPPED, "DUPLICATE_IN_DB", 100, now, now, job_id),
+                )
+                self.db.conn.commit()
+                self._notify_job_updated(job_id)
+                return True
+
+        # Filesystem check (outside lock — I/O shouldn't block DB)
         self.output_root.mkdir(parents=True, exist_ok=True)
         if transcript_exists(self.output_root, video_id):
             self.db.update_job_status(job_id, JobStatus.SKIPPED,
@@ -278,16 +292,32 @@ class JobQueueManager:
         return False
 
     def _process_captions_path(self, job_id: str, vtt_path: Path,
-                               title: str, video_id: str, workspace: Path):
-        """Process found captions: parse VTT → write TXT."""
+                               title: str, video_id: str, workspace: Path,
+                               metadata: dict | None = None):
+        """
+        Process found captions: parse VTT → write TXT.
+        Falls back to Deepgram if the VTT parses to empty text.
+        """
         # Parse captions
         self._update_progress(job_id, JobStage.PARSING_CAPTIONS, PROGRESS_CAPTIONS_PARSE)
-        text = parse_vtt_to_text(vtt_path)
+        try:
+            text = parse_vtt_to_text(vtt_path)
+        except Exception as e:
+            logger.warning("VTT parse failed for job %s: %s — falling back to Deepgram", job_id, e)
+            text = ""
 
         if not text.strip():
-            # Empty captions — fall through to Deepgram would need metadata
-            # For now, write empty file with note
-            text = "(No caption text extracted)"
+            # Empty or failed captions — fall back to Deepgram if metadata available
+            if metadata is not None:
+                logger.info("Empty captions for job %s — switching to Deepgram fallback", job_id)
+                job = self.db.get_job(job_id)
+                if job:
+                    self._process_deepgram_fallback(
+                        job_id, job.youtube_url, metadata, title, video_id, workspace
+                    )
+                return
+            # No metadata to fall back with — write a placeholder
+            text = "(No caption text could be extracted)"
 
         # Write output
         self._update_progress(job_id, JobStage.WRITING_TXT, PROGRESS_CAPTIONS_WRITE)
@@ -438,7 +468,7 @@ class JobQueueManager:
                 self.db.update_chunk(job_id, i,
                                      status=ChunkStatus.FAILED,
                                      error_code=e.code,
-                                     error_message=e.message[:300])
+                                     error_message=e.message[:2000])
                 raise
 
     def _transcribe_with_adaptive_retry(self, audio_path: Path, api_key: str,
@@ -537,7 +567,7 @@ class JobQueueManager:
             self.db.update_job_status(
                 job_id, JobStatus.FAILED,
                 error_code=error.code,
-                error_message=error.message[:500],
+                error_message=error.message[:2000],
                 retryable=1 if error.retryable else 0,
             )
             self._notify_job_updated(job_id)

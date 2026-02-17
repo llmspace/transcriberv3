@@ -20,7 +20,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from app.core.constants import (
-    APP_NAME, APP_VERSION, JobStatus, DEFAULT_OUTPUT_ROOT,
+    APP_NAME, APP_DISPLAY_NAME, APP_VERSION, JobStatus, DEFAULT_OUTPUT_ROOT,
     APP_SUPPORT_DIR, APP_CACHE_DIR,
 )
 from app.core.config import AppConfig
@@ -40,7 +40,7 @@ class MainWindow:
 
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title(f"{APP_NAME} v{APP_VERSION}")
+        self.root.title(f"{APP_DISPLAY_NAME} v{APP_VERSION}")
         self.root.geometry("800x700")
         self.root.minsize(700, 550)
 
@@ -362,7 +362,7 @@ def main():
     # Configure logging (only add file handler if not already configured)
     root_logger = logging.getLogger()
     if not root_logger.handlers:
-        log_dir = APP_SUPPORT_DIR / "logs"
+        log_dir = Path.home() / "Library" / "Logs" / "video-to-text-transcriber"
         log_dir.mkdir(parents=True, exist_ok=True)
         logging.basicConfig(
             level=logging.INFO,

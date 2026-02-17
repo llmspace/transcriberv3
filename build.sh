@@ -1,5 +1,5 @@
 #!/bin/bash
-# YouTubeTranscriber v3 — Build Script
+# video-to-text-transcriber v1.0.0 — Build Script
 # Builds a native macOS .app bundle using PyInstaller.
 #
 # Usage:
@@ -12,7 +12,7 @@ set -euo pipefail
 
 echo ""
 echo "╔══════════════════════════════════════════════════╗"
-echo "║     YouTubeTranscriber v3 — Build Script        ║"
+echo "║   video-to-text-transcriber — Build Script      ║"
 echo "╚══════════════════════════════════════════════════╝"
 echo ""
 
@@ -78,11 +78,11 @@ rm -rf build dist
 # ── Build ────────────────────────────────────────────────────────────
 echo ""
 echo "Building STANDALONE app with PyInstaller..."
-"$PYTHON" -m PyInstaller YouTubeTranscriber.spec --noconfirm
+"$PYTHON" -m PyInstaller VideoToTextTranscriber.spec --noconfirm
 
 # ── Remove quarantine ────────────────────────────────────────────────
-if [ -d "dist/YouTubeTranscriber.app" ]; then
-    xattr -cr "dist/YouTubeTranscriber.app" 2>/dev/null || true
+if [ -d "dist/VideoToTextTranscriber.app" ]; then
+    xattr -cr "dist/VideoToTextTranscriber.app" 2>/dev/null || true
 fi
 
 # ── Done ─────────────────────────────────────────────────────────────
@@ -92,7 +92,7 @@ echo "║     ✅ Build complete!                            ║"
 echo "╠══════════════════════════════════════════════════╣"
 echo "║                                                  ║"
 echo "║  App location:                                   ║"
-echo "║    dist/YouTubeTranscriber.app                   ║"
+echo "║    dist/VideoToTextTranscriber.app               ║"
 echo "║                                                  ║"
 echo "║  To install:                                     ║"
 echo "║    ./install.sh                                  ║"

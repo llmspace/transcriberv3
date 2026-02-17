@@ -172,15 +172,43 @@ class SettingsPanel(ttk.Frame):
         key_frame = ttk.LabelFrame(self, text="  Deepgram API Key  ", padding=10)
         key_frame.pack(fill=tk.X, padx=10, pady=5)
 
-        key_status = "Key set" if keychain_get_api_key() else "Key not set"
-        self.key_status_label = ttk.Label(key_frame, text=key_status)
-        self.key_status_label.pack(side=tk.LEFT, padx=(0, 20))
+        # Status row
+        status_row = ttk.Frame(key_frame)
+        status_row.pack(fill=tk.X, pady=(0, 6))
+        self.key_status_label = ttk.Label(
+            status_row,
+            text="Key set ✓" if keychain_get_api_key() else "No key saved",
+            foreground="green" if keychain_get_api_key() else "orange",
+        )
+        self.key_status_label.pack(side=tk.LEFT)
 
-        ttk.Button(key_frame, text="Change Key...",
-                   command=self._change_key).pack(side=tk.RIGHT)
+        # Inline entry row
+        entry_row = ttk.Frame(key_frame)
+        entry_row.pack(fill=tk.X)
+
+        self._key_var = tk.StringVar()
+        self._key_entry = ttk.Entry(entry_row, textvariable=self._key_var,
+                                    show="*", width=42)
+        self._key_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 6))
+
+        # Show/hide toggle
+        self._show_key = False
+        self._eye_btn = ttk.Button(entry_row, text="Show",
+                                   command=self._toggle_key_visibility, width=5)
+        self._eye_btn.pack(side=tk.LEFT, padx=(0, 6))
+
+        # Save key button
+        self._save_key_btn = ttk.Button(entry_row, text="Save Key",
+                                        command=self._save_inline_key)
+        self._save_key_btn.pack(side=tk.LEFT)
+
+        # Inline status message (verification result)
+        self._key_msg_label = ttk.Label(key_frame, text="", foreground="gray",
+                                        font=("Helvetica", 10))
+        self._key_msg_label.pack(anchor=tk.W, pady=(4, 0))
 
         # ── App Version ──
-        ttk.Label(self, text=f"YouTubeTranscriber v{APP_VERSION}",
+        ttk.Label(self, text=f"video-to-text-transcriber v{APP_VERSION}",
                   foreground="gray").pack(pady=(10, 0))
 
     def _change_output(self):
@@ -204,21 +232,48 @@ class SettingsPanel(ttk.Frame):
         if self.on_config_changed:
             self.on_config_changed()
 
-    def _change_key(self):
-        dialog = APIKeyDialog(
-            self.winfo_toplevel(),
-            title_text="Change Deepgram API Key",
-            body_text="Enter your new Deepgram API key.\n"
-                      "The key will be stored securely in macOS Keychain.",
-        )
-        if dialog.result_key:
-            self.key_status_label.configure(text="Key set")
-        self._refresh_key_status()
+    def _toggle_key_visibility(self):
+        self._show_key = not self._show_key
+        self._key_entry.configure(show="" if self._show_key else "*")
+        self._eye_btn.configure(text="Hide" if self._show_key else "Show")
+
+    def _save_inline_key(self):
+        key = self._key_var.get().strip()
+        if not key:
+            self._key_msg_label.configure(text="Please enter a key first.", foreground="red")
+            return
+
+        self._save_key_btn.configure(state=tk.DISABLED)
+        self._key_msg_label.configure(text="Verifying…", foreground="gray")
+        self.update_idletasks()
+
+        success, message = verify_api_key(key)
+
+        if success:
+            if keychain_set_api_key(key):
+                self._key_msg_label.configure(text="Key verified and saved to Keychain.", foreground="green")
+            else:
+                self._key_msg_label.configure(text="Verified but Keychain save failed — key in memory.", foreground="orange")
+            self._key_var.set("")
+            self._refresh_key_status()
+        elif "Network error" in message:
+            # Offer to save anyway
+            self._key_msg_label.configure(
+                text=f"Warning: {message}. Key saved without verification.", foreground="orange")
+            keychain_set_api_key(key)
+            self._key_var.set("")
+            self._refresh_key_status()
+        else:
+            self._key_msg_label.configure(text=f"Invalid key: {message}", foreground="red")
+
+        self._save_key_btn.configure(state=tk.NORMAL)
 
     def _refresh_key_status(self):
         key = keychain_get_api_key()
-        status = "Key set" if key else "Key not set"
-        self.key_status_label.configure(text=status)
+        if key:
+            self.key_status_label.configure(text="Key set ✓", foreground="green")
+        else:
+            self.key_status_label.configure(text="No key saved", foreground="orange")
 
 
 class DiagnosticsPanel(ttk.Frame):
