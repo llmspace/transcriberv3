@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <strong>A native macOS desktop application for transcribing YouTube videos.</strong><br/>
+  <strong>A native macOS desktop application for transcribing *Tube videos.</strong><br/>
   Built with <strong>PyInstaller</strong> into a genuine <code>.app</code> bundle — double-click to launch from Finder, Spotlight, or the Dock. No terminal required.
 </p>
 
