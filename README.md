@@ -266,9 +266,9 @@ All processing happens locally on your Mac. Audio files are downloaded temporari
 
 ## Disclaimer
 
-This tool is intended for **personal, educational, and accessibility use only**. Users are responsible for ensuring their use complies with YouTube's Terms of Service and applicable laws in their jurisdiction.
+This tool is intended for **personal, educational, and accessibility use only**. Users are responsible for ensuring their use complies with any video platform's Terms of Service and applicable laws in their jurisdiction.
 
-This tool does not host, redistribute, or monetize any YouTube content. It uses `yt-dlp` (an open-source tool) to access publicly available content for the purpose of generating text transcripts. The application does not circumvent digital rights management (DRM) or technological protection measures.
+This tool does not host, redistribute, or monetize any video content. It uses `yt-dlp` (an open-source tool) to access publicly available content for the purpose of generating text transcripts. The application does not circumvent digital rights management (DRM) or technological protection measures.
 
 **By using this software, you acknowledge that:**
 - You will only transcribe content you have the right to access
