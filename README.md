@@ -26,7 +26,7 @@ Takes a **captions-first approach**: it downloads creator-provided English capti
 
 ## Features
 
-Designed as a single-user, offline-first macOS application with no server component and no incoming network connections.
+Designed as a single-user, macOS application.
 
 | Category | Details |
 |----------|---------|
